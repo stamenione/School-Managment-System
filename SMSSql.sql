@@ -1,192 +1,136 @@
-CREATE TABLE `administrator` (
-  `idAdministrator` int NOT NULL,
-  `idUser` int NOT NULL,
-  PRIMARY KEY (`idAdministrator`),
-  KEY `idUser_idx` (`idUser`),
-  CONSTRAINT `idUserA` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `classroom` (
-  `idClassroom` int NOT NULL,
-  `classroomNumber` int NOT NULL,
-  `numberOfSeats` int NOT NULL,
-  `description` varchar(45) NOT NULL,
-  PRIMARY KEY (`idClassroom`)
+  `idclassroom` int NOT NULL AUTO_INCREMENT,
+  `classroomNumber` int DEFAULT NULL,
+  `numberOfSeats` int DEFAULT NULL,
+  PRIMARY KEY (`idclassroom`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `exam` (
-  `idExam` int NOT NULL,
-  `dateOfStart` date NOT NULL,
-  `duration` int NOT NULL,
-  `idExaminationPeriod` int NOT NULL,
-  `idSubject` int NOT NULL,
-  PRIMARY KEY (`idExam`),
-  KEY `idExaminationPeriodE_idx` (`idExaminationPeriod`),
+  `idexam` int NOT NULL AUTO_INCREMENT,
+  `dateStart` date DEFAULT NULL,
+  `duration` int DEFAULT NULL,
+  `idExaminationPeriod` int DEFAULT NULL,
+  `idSubject` int DEFAULT NULL,
+  PRIMARY KEY (`idexam`),
+  KEY `idExaminationPeriod_idx` (`idExaminationPeriod`),
   KEY `idSubjectE_idx` (`idSubject`),
-  CONSTRAINT `idExaminationPeriodE` FOREIGN KEY (`idExaminationPeriod`) REFERENCES `examinationperiod` (`idExaminationPeriod`),
-  CONSTRAINT `idSubjectE` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idSubject`)
+  CONSTRAINT `idExaminationPeriodE` FOREIGN KEY (`idExaminationPeriod`) REFERENCES `examinationperiod` (`idexaminationperiod`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idSubjectE` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idsubject`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `examclassroom` (
-  `idExamClassroom` int NOT NULL,
-  `idExam` int NOT NULL,
-  `idClassroom` int NOT NULL,
-  PRIMARY KEY (`idExamClassroom`),
+  `idexamclassroom` int NOT NULL AUTO_INCREMENT,
+  `idExam` int DEFAULT NULL,
+  `idClassroom` int DEFAULT NULL,
+  PRIMARY KEY (`idexamclassroom`),
   KEY `idExamEC_idx` (`idExam`),
   KEY `idClassroomEC_idx` (`idClassroom`),
-  CONSTRAINT `idClassroomEC` FOREIGN KEY (`idClassroom`) REFERENCES `classroom` (`idClassroom`),
-  CONSTRAINT `idExamEC` FOREIGN KEY (`idExam`) REFERENCES `exam` (`idExam`)
+  CONSTRAINT `idClassroomEC` FOREIGN KEY (`idClassroom`) REFERENCES `classroom` (`idclassroom`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idExamEC` FOREIGN KEY (`idExam`) REFERENCES `exam` (`idexam`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `examinationperiod` (
-  `idExaminationPeriod` int NOT NULL,
-  `dateOfStart` date NOT NULL,
-  `dateOfEnd` date NOT NULL,
-  `semester` int NOT NULL,
-  PRIMARY KEY (`idExaminationPeriod`),
-  KEY `idExaminationPeriod` (`idExaminationPeriod`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `examobligation` (
-  `isAppeard` int NOT NULL,
-  `classroomNumber` int NOT NULL,
-  `idExam` int NOT NULL,
-  `idObligation` int NOT NULL,
-  PRIMARY KEY (`idObligation`),
-  KEY `idExamEO_idx` (`idExam`) /*!80000 INVISIBLE */,
-  CONSTRAINT `idExamEO` FOREIGN KEY (`idExam`) REFERENCES `exam` (`idExam`),
-  CONSTRAINT `idObligationEO` FOREIGN KEY (`idObligation`) REFERENCES `obligation` (`idObligation`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `labobligation` (
-  `idLabObligation` int NOT NULL,
-  `idObligation` int NOT NULL,
-  PRIMARY KEY (`idLabObligation`),
-  KEY `idObligationLO_idx` (`idObligation`),
-  CONSTRAINT `idObligationLO` FOREIGN KEY (`idObligation`) REFERENCES `obligation` (`idObligation`)
+  `idexaminationperiod` int NOT NULL AUTO_INCREMENT,
+  `dateStart` date DEFAULT NULL,
+  `dateEnd` date DEFAULT NULL,
+  `semester` int DEFAULT NULL,
+  PRIMARY KEY (`idexaminationperiod`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `learningmaterials` (
-  `idLearningMaterials` int NOT NULL,
-  `file` blob NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `idSubject` int NOT NULL,
-  PRIMARY KEY (`idLearningMaterials`),
+  `idlearningmaterials` int NOT NULL AUTO_INCREMENT,
+  `file` blob,
+  `name` varchar(45) DEFAULT NULL,
+  `idSubject` int DEFAULT NULL,
+  PRIMARY KEY (`idlearningmaterials`),
   KEY `idSubjectLM_idx` (`idSubject`),
-  CONSTRAINT `idSubjectLM` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idSubject`)
+  CONSTRAINT `idSubjectLM` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idsubject`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `notification` (
-  `idNotification` int NOT NULL,
-  `message` varchar(10000) NOT NULL,
-  `idSubject` int NOT NULL,
-  PRIMARY KEY (`idNotification`),
-  KEY `idSubjectN_idx` (`idSubject`),
-  CONSTRAINT `idSubjectN` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idSubject`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `professor` (
-  `idProfessor` int NOT NULL,
-  `department` varchar(50) NOT NULL,
-  `qualification` varchar(45) NOT NULL,
-  `idUser` int NOT NULL,
-  PRIMARY KEY (`idProfessor`),
-  KEY `idUser_idx` (`idUser`),
-  CONSTRAINT `idUserP` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`)
+  `idnotification` int NOT NULL AUTO_INCREMENT,
+  `message` varchar(10000) DEFAULT NULL,
+  `idSubject` int DEFAULT NULL,
+  PRIMARY KEY (`idnotification`),
+  KEY `idSubject_idx` (`idSubject`),
+  CONSTRAINT `idSubject` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idsubject`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `obligation` (
-  `idObligation` int NOT NULL,
-  `points` double NOT NULL,
-  `status` tinyint NOT NULL,
-  `idSubjectGrade` int NOT NULL,
-  PRIMARY KEY (`idObligation`),
+  `idobligation` int NOT NULL AUTO_INCREMENT,
+  `points` double DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `isAppeared` tinyint DEFAULT NULL,
+  `classroomNumber` int DEFAULT NULL,
+  `obligationType` varchar(20) DEFAULT NULL,
+  `idExam` int DEFAULT NULL,
+  `idSubjectGrade` int DEFAULT NULL,
+  PRIMARY KEY (`idobligation`),
+  KEY `idExamO_idx` (`idExam`),
   KEY `idSubjectGradeO_idx` (`idSubjectGrade`),
-  CONSTRAINT `idSubjectGradeO` FOREIGN KEY (`idSubjectGrade`) REFERENCES `subjectgrade` (`idSubjectGrade`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `projectobligation` (
-  `idObligation` int NOT NULL,
-  PRIMARY KEY (`idObligation`),
-  CONSTRAINT `idObligationPO` FOREIGN KEY (`idObligation`) REFERENCES `obligation` (`idObligation`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `relationshipps` (
-  `idRelationshipPS` int NOT NULL,
-  `idProfessor` int NOT NULL,
-  `idSubject` int NOT NULL,
-  PRIMARY KEY (`idRelationshipPS`),
-  KEY `idSubject_idx` (`idSubject`),
-  KEY `idProfessor_idx` (`idProfessor`),
-  CONSTRAINT `idProfessor` FOREIGN KEY (`idProfessor`) REFERENCES `professor` (`idProfessor`),
-  CONSTRAINT `idSubjectPS` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idSubject`)
+  CONSTRAINT `idExamO` FOREIGN KEY (`idExam`) REFERENCES `exam` (`idexam`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idSubjectGradeO` FOREIGN KEY (`idSubjectGrade`) REFERENCES `subjectgrade` (`idsubjectgrade`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `proposition` (
-  `idProposition` int NOT NULL,
-  `k` int NOT NULL,
-  `l` int NOT NULL,
-  `i` int NOT NULL,
-  `idSubject` int NOT NULL,
-  PRIMARY KEY (`idProposition`),
+  `idproposition` int NOT NULL AUTO_INCREMENT,
+  `k` int DEFAULT NULL,
+  `l` int DEFAULT NULL,
+  `i` int DEFAULT NULL,
+  `idSubject` int DEFAULT NULL,
+  PRIMARY KEY (`idproposition`),
   KEY `idSubjectPP_idx` (`idSubject`),
-  CONSTRAINT `idSubjectPP` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idSubject`)
+  CONSTRAINT `idSubjectPP` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idsubject`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `reservation` (
-  `idReservation` int NOT NULL,
-  `dateOfStart` date NOT NULL,
-  `duration` int NOT NULL,
-  `idClassroom` int NOT NULL,
+  `idReservation` int NOT NULL AUTO_INCREMENT,
+  `dateStart` date DEFAULT NULL,
+  `dateEnd` date DEFAULT NULL,
+  `duration` int DEFAULT NULL,
+  `idClassroom` int DEFAULT NULL,
   PRIMARY KEY (`idReservation`),
   KEY `idClassroomR_idx` (`idClassroom`),
-  CONSTRAINT `idClassroomR` FOREIGN KEY (`idClassroom`) REFERENCES `classroom` (`idClassroom`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `student` (
-  `idStudent` int NOT NULL,
-  `index` varchar(10) NOT NULL,
-  `status` varchar(20) NOT NULL,
-  `espb` int NOT NULL,
-  `yearEnrolled` int NOT NULL,
-  `idUserS` int NOT NULL,
-  PRIMARY KEY (`idStudent`),
-  KEY `idUserS_idx` (`idUserS`),
-  CONSTRAINT `idUserS` FOREIGN KEY (`idUserS`) REFERENCES `user` (`idUser`)
+  CONSTRAINT `idClassroomR` FOREIGN KEY (`idClassroom`) REFERENCES `classroom` (`idclassroom`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `subject` (
-  `idSubject` int NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `espbPoints` int NOT NULL,
-  `semester` int NOT NULL,
-  `idStudent` int NOT NULL,
-  PRIMARY KEY (`idSubject`),
-  KEY `idStudent_idx` (`idStudent`),
-  CONSTRAINT `idStudentS` FOREIGN KEY (`idStudent`) REFERENCES `student` (`idStudent`)
+  `idsubject` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `espbPoints` int DEFAULT NULL,
+  `semester` int DEFAULT NULL,
+  PRIMARY KEY (`idsubject`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `subjectgrade` (
-  `idSubjectGrade` int NOT NULL,
-  `FinalGrade` int NOT NULL,
-  `yearOfEnrollment` date NOT NULL,
-  `idSubject` int NOT NULL,
-  `idStudent` int NOT NULL,
-  PRIMARY KEY (`idSubjectGrade`),
-  KEY `idSubject_idx` (`idSubject`),
-  KEY `idStudent_idx` (`idStudent`),
-  CONSTRAINT `idStudent` FOREIGN KEY (`idStudent`) REFERENCES `student` (`idStudent`),
-  CONSTRAINT `idSubject` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idSubject`)
+  `idsubjectgrade` int NOT NULL AUTO_INCREMENT,
+  `finalGrade` double DEFAULT NULL,
+  `yearOfEnrollment` date DEFAULT NULL,
+  `idUser` int DEFAULT NULL,
+  `idSubject` int DEFAULT NULL,
+  PRIMARY KEY (`idsubjectgrade`),
+  KEY `idUserSG_idx` (`idUser`),
+  KEY `idSubjectSG_idx` (`idSubject`),
+  CONSTRAINT `idSubjectSG` FOREIGN KEY (`idSubject`) REFERENCES `subject` (`idsubject`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idUserSG` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user` (
   `idUser` int NOT NULL,
-  `username` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `surrname` varchar(45) NOT NULL,
-  `image` blob NOT NULL,
-  `dayOfBirth` varchar(45) NOT NULL,
-  `email` varchar(45) NOT NULL,
+  `username` varchar(45) DEFAULT NULL,
+  `password` varchar(45) DEFAULT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  `surname` varchar(45) DEFAULT NULL,
+  `gender` char(1) DEFAULT NULL,
+  `image` blob,
+  `dayOfBirth` date DEFAULT NULL,
+  `index` varchar(10) DEFAULT NULL,
+  `espb` int DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `yearEnrolled` date DEFAULT NULL,
+  `department` varchar(45) DEFAULT NULL,
+  `qualification` varchar(45) DEFAULT NULL,
+  `userType` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
